@@ -1,0 +1,14 @@
+{
+    "contents" : "#--------------------\n# genSQL Test\n# TODO: Make this into a real set of tests with the testhat package\n#\n\n#----------------\n# Test Functions\n#---------------\ngenSQL(lm1)\ngenSQL(glm1)\ngenSQL(tree)\n\n\n\n#------------\n# Model and Data Generation for Test Functions\n#-------------\n\n# Data\n#--------\nx1 <- runif(50, min = -10, max = 10)\nx2 <- runif(50, min = -10, max = 10)\ny <- x1 + x2 + rnorm(50, mean=0, sd = 3)\ny2 <- rbinom(50, size = 1, prob = 0.5)\n\ndf <- data.frame(x1, x2, y)\ndf2 <- data.frame(x1, x2, y2)\n\nx3 <- c(rep(\"Really Long Variable Name Here\", times = 40), rep(\"Shorter Different Variable Name\", times = 10))\nx3 <- factor(x3)\ny3 <- factor(c(rep(0, times = 40), rep(1, times = 10)))\ndf3 <- data.frame(x1, x3, y3)\n\n\n# LM\n#------------\nlm1 <- lm(y~., data=df)\n\nsummary(lm1)$coefficients\n\ncoeff <- summary(lm1)$coefficients[, \"Estimate\"]\nvar.names <- rownames(summary(lm1)$coefficients)\n\nsql.var <- paste(coeff[-1], \"*\" ,var.names[-1], \"+\", collapse = \" \")\nsql.statement <- paste(\"SELECT\", sql.var, coeff[1])\n\n# GLM\n#--------------\nglm1 <- glm(y2~x1*x2, data=df2, family = \"binomial\")\nsummary(glm1)$coefficients\n\ncoeff <- summary(glm1)$coefficients[, \"Estimate\"]\nvar.names <- rownames(summary(glm1)$coefficients)\n\nsql.var <- paste(coeff[-1], \"*\" ,var.names[-1], \"+\", collapse = \" \")\nsql.statement <- paste(\"SELECT 1 / (1 + exp(\", sql.var, coeff[1], \")\")\n\n\n# Decision Tree\n#---------------\nlibrary(rpart)\n\n# 2 parts\n# 1) Parse out variable name, sign, variable value, and output value\n# 2) Build the tree\n\ntree <- rpart(y2 ~., df2)\ntree2 <- rpart(y3~., data = df3, method=\"class\")",
+    "created" : 1334862563630.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "hash" : "139605307",
+    "id" : "EFDC1E6C",
+    "lastKnownWriteTime" : 1330986815,
+    "path" : "//QL1WSSV3/USERS/JCapehart/Desktop/Tools Experiment/genSQL/genSQL_Tests.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
